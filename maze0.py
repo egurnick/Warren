@@ -5,13 +5,14 @@ import PIL
 from skimage.io import imsave
 def main(img):
     img = Image.open(img)
-    l =[]
+    l = []
     for i in range(img.size[0]):
         x = []
         for j in range(img.size[1]):
             px = img.getpixel((i,j))
             x.append(px[0]/255)
         l.append(x)
+    l = np.asarray(l)
     size  = ((img.size[0]-2)//16)
     ld = []
 
@@ -27,6 +28,8 @@ def main(img):
             if l[j*16+8][i*16+17]==1:
                 x.append(j+size + i*size)
             ld.append(x) 
+    ld = np.asarray(ld)
+
     ldd = []
     ins  = 0
     fs = 0
@@ -36,10 +39,12 @@ def main(img):
             if not (j<0 or j>(size**2)-1):
                 x.append(j)
             elif j<0:
-                ins = ld.index(i)
+                ins = ld.tolist().index(i)
             else:
-                fs = ld.index(i)
+                fs = ld.tolist().index(i)
         ldd.append(x)
+    ldd = np.asarray(ldd)
+
     ob = ql_adv.maze(size*size,ldd,ins,fs)
     route = ob.main()
     path = []
@@ -53,6 +58,8 @@ def main(img):
             path.append('u')
         if i[j]-i[j+1]==size*-1:
             path.append('d')
+
+    path = np.asarray(path)
     cell = route[0]
     dest = route[-1]
     xc = cell%size       
